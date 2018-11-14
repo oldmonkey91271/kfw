@@ -54,7 +54,7 @@ class Loan:
     def GetNumPymt(self, P0, Pn):
         x = -1 * math.log10(1 - (P0 * self.i / Pn))
         y = math.log10(1 + self.i)
-        return (x / y)
+        return math.ceil(x / y)
 
     # The maximum loan calculator method
     # Input     maximum payment (Pn) & number of payments (Np)
@@ -77,7 +77,45 @@ class Loan:
         x1 = math.log10(1 - (P1 * self.i / Pn))
         x0 = math.log10(1 - (P0 * self.i / Pn))
         y = math.log10(1 + self.i)
-        return ((x1 - x0) / y)
+        return math.ceil((x1 - x0) / y)
+
+    # The loan burn down calculator method
+    # Input     starting principal balance (P0), regular payment (Pn)
+    # Output    lists containing principal remaining, principal paid, & interest paid
+    def GetLoanBurnDown(self, P0, Pn):
+
+        # First compute total payments to pay off loan
+        Np = self.GetNumPymt(P0, Pn)
+
+        # Initialize burn down lists
+        P_remainder = [P0]
+        P_paid      = [0]
+        I_paid      = [0]
+
+        # Initialize running loan principal
+        p_nn        = P0
+        for nn in range(1, Np+1):
+
+            # Compute the loan remainder
+            p_remainder = self.GetLoanRemainder(P0, Pn, nn)
+            P_remainder.append(p_remainder)
+
+            # Compute principal paid
+            p_paid = p_nn - p_remainder
+            P_paid.append(p_paid)
+
+            # Compute interest paid
+            i_paid = Pn - p_paid
+            I_paid.append(i_paid)
+
+            print("Payment %d, Loan remainder is %2.2f, P,I is (%2.2f, %2.2f)" % (nn, p_remainder, p_paid, i_paid))
+
+            # Update running principal balance
+            p_nn = p_remainder
+
+
+        return (P_remainder, P_paid, I_paid)
+
 
     # The loan name set/get methods
     def SetName(self, Name):
@@ -85,6 +123,7 @@ class Loan:
 
     def GetName(self):
         return self.Name
+
 
 
     # The loan interest rate set/get methods
@@ -145,3 +184,5 @@ if (1):
     # Obtain number of payments to achieve an ending loan balance (P1)
     n1 = loan_1.GetNumPymtPartial(P0, P1, Pymt)
     print("The number of payments to reach $%1.2f balance is %1.0f (%1.1f years)" % (P1, n1, n1 / loan_1.GetNp()))
+
+    loan_1.GetLoanBurnDown(P0, Pymt)
