@@ -108,7 +108,7 @@ class Loan:
             i_paid = Pn - p_paid
             I_paid.append(i_paid)
 
-            print("Payment %d, Loan remainder is %2.2f, P,I is (%2.2f, %2.2f)" % (nn, p_remainder, p_paid, i_paid))
+            #print("Payment %d, Loan remainder is %2.2f, P,I is (%2.2f, %2.2f)" % (nn, p_remainder, p_paid, i_paid))
 
             # Update running principal balance
             p_nn = p_remainder
@@ -165,24 +165,33 @@ if (1):
     r       = 0.0229    # Annual interest rate
     n_r     = 2         # Interest compounds semi annually
     n_p     = 52        # Weekly payments
+    NumPymt = 681
 
     # Instantiate the loan
     loan_1 = Loan('My Mortgage', r, n_r, n_p)
 
     # Obtain weekly payment amount of the loan given principal remaining and 681 weekly payments
-    Pymt = loan_1.GetPymt(P0, 681)
+    Pymt = loan_1.GetPymt(P0, NumPymt)
     print("The loan payment amount is $%1.2f" % Pymt)
     # Obtain number of payments given starting principal and computed weekly payment amount
     Np = loan_1.GetNumPymt(P0, Pymt)
     print("The number of payments is %1.0f, %1.2f years" % (Np, Np / loan_1.GetNp()))
     # Obtain the maximum loan amount given the interest rate, loan payment, and number of payments
-    MaxLoan = loan_1.GetMaxLoan(Pymt, 681)
+    MaxLoan = loan_1.GetMaxLoan(Pymt, NumPymt)
     print("The maximum loan amount is $%1.2f" % MaxLoan)
     # Obtain the remaining loan after a number of payments
-    RemLoan = loan_1.GetLoanRemainder(P0, Pymt, 681)
-    print("The loan remainder after %1.0f payments is $%1.2f" % (681, RemLoan))
+    RemLoan = loan_1.GetLoanRemainder(P0, Pymt, NumPymt)
+    print("The loan remainder after %1.0f payments is $%1.2f" % (NumPymt, RemLoan))
     # Obtain number of payments to achieve an ending loan balance (P1)
     n1 = loan_1.GetNumPymtPartial(P0, P1, Pymt)
     print("The number of payments to reach $%1.2f balance is %1.0f (%1.1f years)" % (P1, n1, n1 / loan_1.GetNp()))
 
-    loan_1.GetLoanBurnDown(P0, Pymt)
+    # Obtain the loan burn down data
+    P_remainder, P_paid, I_paid = loan_1.GetLoanBurnDown(P0, Pymt)
+    # Determine total principal & interest paid (cost of borrowing)
+    SumPrincipal = sum(P_paid)
+    SumInterest = sum(I_paid)
+    print("\nTotal principal paid is $%2.2f" % SumPrincipal)
+    print("Total interest paid is $%2.2f" % SumInterest)
+
+    # Plot loan burn down data
