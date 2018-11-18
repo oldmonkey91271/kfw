@@ -1,6 +1,10 @@
 #!usr/bin/python
 
 import math
+import numpy
+import scipy
+import matplotlib.pyplot as plt
+import pandas
 
 # Define generalized Loan class
 class Loan:
@@ -96,17 +100,18 @@ class Loan:
         p_nn        = P0
         for nn in range(1, Np+1):
 
-            # Compute the loan remainder
+            # Compute loan remainder
             p_remainder = self.GetLoanRemainder(P0, Pn, nn)
             P_remainder.append(p_remainder)
 
             # Compute principal paid
             p_paid = p_nn - p_remainder
-            P_paid.append(p_paid)
-
             # Compute interest paid
             i_paid = Pn - p_paid
-            I_paid.append(i_paid)
+
+            # Accumulate principal and interest paid
+            P_paid.append(P_paid[-1] + p_paid)
+            I_paid.append(I_paid[-1] + i_paid)
 
             #print("Payment %d, Loan remainder is %2.2f, P,I is (%2.2f, %2.2f)" % (nn, p_remainder, p_paid, i_paid))
 
@@ -117,7 +122,37 @@ class Loan:
         return (P_remainder, P_paid, I_paid)
 
 
-    # The loan name set/get methods
+    # The loan burn down plotting method
+    # Input     starting principal balance (P0), regular payment (Pn)
+    # Output    lists containing principal remaining, principal paid, & interest paid
+    def PlotLoanBurnDown(self, P0, Pn):
+
+        # Obtain the loan burn down
+        P_remainder, P_paid, I_paid = self.GetLoanBurnDown(P0, Pn)
+
+        Np = len(P_remainder)
+
+        plt.ion()
+        plt.subplot(1,1,1)
+        # Plot the loan burn down
+        plt.plot(range(1, Np +1), P_remainder, '-b', label="Loan Balance")
+        plt.plot(range(1, Np +1), P_paid, '-k', label="Principal Paid (P)")
+        plt.plot(range(1, Np +1), I_paid, 'r', label="Cost of Borrowing (I)")
+        plt.bar(range(1, Np +1), numpy.sum([P_paid, I_paid], axis=0), label='P+I')
+
+        plt.legend(loc='best')
+        plt.ylabel("Dollars ($)")
+        plt.xlabel("Payment #")
+        plt.title('Loan \$%2.2f, Payment \$%2.2f, Rate %2.2f pct' % (P0, Pn, (self.r*100)))
+        plt.grid(True, which='both')
+        plt.show()
+        #plt.close('all')
+
+        return
+
+
+
+    #  The loan name set/get methods
     def SetName(self, Name):
         self.Name = Name
 
@@ -189,9 +224,14 @@ if (1):
     # Obtain the loan burn down data
     P_remainder, P_paid, I_paid = loan_1.GetLoanBurnDown(P0, Pymt)
     # Determine total principal & interest paid (cost of borrowing)
-    SumPrincipal = sum(P_paid)
-    SumInterest = sum(I_paid)
+    SumPrincipal = P_paid[-1]
+    SumInterest  = I_paid[-1]
     print("\nTotal principal paid is $%2.2f" % SumPrincipal)
     print("Total interest paid is $%2.2f" % SumInterest)
 
     # Plot loan burn down data
+    loan_1.PlotLoanBurnDown(P0, Pymt)
+
+    wait = input("\nPress a key to continue.")
+    print('\nWe\'re done!')
+
