@@ -3,13 +3,23 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort
 from random import randint
 
+# Create an instance of Flask called app in the current file
+# This is the beginning of a new web application
 app = Flask(__name__)
 
 
+# Define the default page
 @app.route("/")
+# The function activated from the default page
 def index():
     return "Flask App!"
 
+# Define the about page
+@app.route("/about/")
+def about():
+    return render_template('about.html')
+
+# Define parameterized page
 @app.route("/hello/<string:name>/")
 def hello(name):
     quotes = [ "'If people do not believe that mathematics is simple, it is only because they do not realize how complicated life is.' -- John Louis von Neumann ",
@@ -23,4 +33,4 @@ def hello(name):
     return render_template('test.html', **locals())
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port = 80)
+    app.run(host='0.0.0.0', port = 80, debug=True)
