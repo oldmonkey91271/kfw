@@ -2,9 +2,7 @@
 
 import math
 import numpy
-import scipy
 import matplotlib.pyplot as plt
-import pandas
 
 # Define generalized Loan class
 class Loan:
@@ -146,7 +144,6 @@ class Loan:
         plt.title('Loan \$%2.2f, Payment \$%2.2f, Rate %2.2f pct' % (P0, Pn, (self.r*100)))
         plt.grid(True, which='both')
         plt.show()
-        #plt.close('all')
 
         return
 
