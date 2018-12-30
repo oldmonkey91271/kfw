@@ -116,9 +116,33 @@ class Loan:
             # Update running principal balance
             p_nn = p_remainder
 
-
         return (P_remainder, P_paid, I_paid)
 
+    # The loan comparison method
+    # Input     starting principal balance (P0), regular payment (P1), regular payment (P2)
+    # Output    cost savings between loan's 1 & 2
+    def CompareLoan(self, P01, P1, P02, P2):
+
+        # Compute the loand burn down for each loan
+        P_remainder1, P_paid1, I_paid1 = self.GetLoanBurnDown(P01, P1)
+        P_remainder2, P_paid2, I_paid2 = self.GetLoanBurnDown(P02, P2)
+
+        # Compute the interest paid in each loan
+        I1 = I_paid1[-1]
+        I2 = I_paid2[-1]
+
+        # Compute the number of payments in each loan
+        Np1 = self.GetNumPymt(P01, P1)
+        Np2 = self.GetNumPymt(P02, P2)
+
+        print("\nLoan 1 of $%2.2f, interest rate %2.1f.\n" %(P01, (self.r*100)))
+        print("Scenario 1: Payment $%2.2f, total payments %d, interest paid $%2.2f.\n" % (P1, Np1, I1))
+        print("\nLoan 2 of $%2.2f, interest rate %2.1f.\n" %(P02, (self.r*100)))
+        print("Scenario 2: Payment $%2.2f, total payments %d, interest paid $%2.2f.\n" % (P2, Np2, I2))
+
+        print("Years saved is %2.1f (%2.2f), interest saved is $%2.2f\n" % (((Np2 - Np1) / self.n_p), (Np2 / self.n_p), (I2 - I1)))
+
+        return
 
     # The loan burn down plotting method
     # Input     starting principal balance (P0), regular payment (Pn)
@@ -141,7 +165,7 @@ class Loan:
         plt.legend(loc='best')
         plt.ylabel("Dollars ($)")
         plt.xlabel("Payment #")
-        plt.title('Loan \$%2.2f, Payment \$%2.2f, Rate %2.2f pct' % (P0, Pn, (self.r*100)))
+        plt.title('Loan $%2.2f, Payment \$%2.2f, Rate %2.2f pct' % (P0, Pn, (self.r*100)))
         plt.grid(True, which='both')
         plt.show()
 
@@ -192,12 +216,12 @@ class Loan:
 
 if (1):
     # Some unit test code to sanitize loan.py
-    P0      = 255675    # Loan starting balance
-    P1      = 100000    # Loan ending balance
+    P0      = 253089     # Loan starting balance
+    P1      = 0         # Loan ending balance
     r       = 0.0229    # Annual interest rate
     n_r     = 2         # Interest compounds semi annually
-    n_p     = 52        # Weekly payments
-    NumPymt = 681
+    n_p     = 52        # Monthly payments
+    NumPymt = 673
 
     # Instantiate the loan
     loan_1 = Loan('My Mortgage', r, n_r, n_p)
@@ -225,6 +249,9 @@ if (1):
     SumInterest  = I_paid[-1]
     print("\nTotal principal paid is $%2.2f" % SumPrincipal)
     print("Total interest paid is $%2.2f" % SumInterest)
+
+    # Compare how the loan changes by adjusting payment
+    loan_1.CompareLoan(P0, Pymt, P0, Pymt+100)
 
     # Plot loan burn down data
     loan_1.PlotLoanBurnDown(P0, Pymt)
