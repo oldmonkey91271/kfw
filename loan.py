@@ -48,10 +48,10 @@ class Loan:
         self.i = r                                          # << Effective interest rate
 
         # If compounding interest
-        if (ldf['Type'] == 'Coumpound'):
+        if (ldf['Type'] == 'Compound'):
             self.i = ((1 + (r / n_r)) ** (n_r / n_p)) - 1   # << Effective interest rate based on payment frequency
 
-        print("\nLoan created >> " + Name)
+        print("\nLoan created >> " + self.Name)
         print(" >> Interest rate is %1.2f percent, compounded %d times annually" % (r * 100, n_r))
         if (n_p == 12):
             PymtFrequency = "monthly"
@@ -307,18 +307,18 @@ else:
 
         # Read the input loan parameter file
         print('\nReading input loan file... ', loanfile1)
-        l1_df = pd.read_csv(loanfile1)
+        l1df = pd.read_csv(loanfile1)
 
-        print(str(l1_df.iloc[1]))
+        print(str(l1df.iloc[1]))
 
-        nn = l1_df.iloc[1]
+        nn = l1df.iloc[1]
 
         print(str(nn[0]))
         print(str(nn[1]))
         print(str(nn['Index']))
 
         # Instantiate MyLoans object
-        #my_loans = MyLoans(l1_df)
+        my_loans = MyLoans(l1df)
 
 
     if __name__ == '__main__':
