@@ -1,30 +1,55 @@
-#!usr/bin/python
+#!/usr/bin/python3
 
+import sys
+import getopt
 import math
 import numpy
 import matplotlib.pyplot as plt
+import pandas as pd
+
+# Define the MyLoans class
+class MyLoans:
+
+    # The constructor
+    # Accepts a dataframe of loan descriptors
+    def __init__(self,
+                 ldf: object) -> object:
+
+        (NumLoan, NumParm) = ldf.shape
+
+        self.loans = []
+
+        # Iterate on each loan & instantiate loan objects
+        for n in range(NumLoan):
+            # Append to list of loan objects
+            self.loans.append(Loan(ldf.iloc[n]))
 
 # Define generalized Loan class
 class Loan:
 
     # The constructor
-    # The loan class contains the following attributes:
-    #   Name of the loan (Name)
-    #   Annual interest rate of the loan (r)
-    #   Number of times interest is compounded annually (n_r)
-    #   Number of times payments are made annually (n_p)
-    #   The effective interest rate of loan when compounded at payment frequency
+    # Accepts a dataframe loan descriptor
     def __init__(self,
-                 Name: object,
-                 r: object,
-                 n_r: object,
-                 n_p: object) -> object:
+                 ldf: object) -> object:
 
-        self.Name = Name                                # Name of the loan
-        self.r = r                                      # r is the annual interest rate
-        self.n_r = n_r                                  # n_r is frequency of interest compounding annually
-        self.n_p = n_p                                  # n_p is the frequency of payment annually
-        self.i = ((1 + (r / n_r)) ** (n_r / n_p)) - 1   # Effective interest rate based payment frequency
+        self.ldf = ldf                                      # << loan dataframe
+
+        self.Name = ldf['Name']                             # << Loan name
+
+        r = ldf['AIR']                                      # << Annual interest rate
+        self.r = r
+
+        n_p = ldf['APF']                                    # << Annual payment frequency
+        self.n_p = n_p
+
+        n_r = ldf['ACF']                                    # << Annual compounding frequency
+        self.n_r = n_r
+
+        self.i = r                                          # << Effective interest rate
+
+        # If compounding interest
+        if (ldf['Type'] == 'Coumpound'):
+            self.i = ((1 + (r / n_r)) ** (n_r / n_p)) - 1   # << Effective interest rate based on payment frequency
 
         print("\nLoan created >> " + Name)
         print(" >> Interest rate is %1.2f percent, compounded %d times annually" % (r * 100, n_r))
@@ -171,16 +196,12 @@ class Loan:
 
         return
 
-
-
     #  The loan name set/get methods
     def SetName(self, Name):
         self.Name = Name
 
     def GetName(self):
         return self.Name
-
-
 
     # The loan interest rate set/get methods
     def SetRate(self, r):
@@ -190,7 +211,7 @@ class Loan:
     def GetRate(self):
         return self.r
 
-    # The loan interest rate compound frequency set/get methods
+    # The loan interest rate compound frequency sTheet/get methods
     def SetNr(self, n_r):
         self.n_r = n_r
         self.SetEffRate()
@@ -214,7 +235,7 @@ class Loan:
     def GetEffRate(self):
         return self.i
 
-if (1):
+if (0):
     # Some unit test code to sanitize loan.py
     P0      = 253089     # Loan starting balance
     P1      = 0         # Loan ending balance
@@ -257,5 +278,49 @@ if (1):
     loan_1.PlotLoanBurnDown(P0, Pymt)
 
     wait = input("\nPress a key to continue.")
+
     print('\nWe\'re done!')
+else:
+
+    def main(argv):
+        # Process the commandline arguments
+        #print('Number of arguments: ', len(argv))
+        #print('The arguments are: ', str(argv))
+
+        # Initialize the input loan files
+        loanfile1 = ''
+        loanfile2 = ''
+
+        try:
+            opts, args = getopt.getopt(argv, "hi:o:", ["ifile=", "ofile="])
+        except getopt.GetoptError:
+            print ('usage: kloan -i <loanfile1> -o <loanfile2>')
+            sys.exit(2)
+        for opt, arg in opts:
+            if opt == '-h':
+                print ('usage: kloan -i <loanfile1> -o <loanfile2>')
+                sys.exit()
+            elif opt in ("-i", "--ifile"):
+                loanfile1 = arg
+            elif opt in ("-o", "--ofile"):
+                loanfile2 = arg
+
+        # Read the input loan parameter file
+        print('\nReading input loan file... ', loanfile1)
+        l1_df = pd.read_csv(loanfile1)
+
+        print(str(l1_df.iloc[1]))
+
+        nn = l1_df.iloc[1]
+
+        print(str(nn[0]))
+        print(str(nn[1]))
+        print(str(nn['Index']))
+
+        # Instantiate MyLoans object
+        #my_loans = MyLoans(l1_df)
+
+
+    if __name__ == '__main__':
+        main(sys.argv[1:])
 
