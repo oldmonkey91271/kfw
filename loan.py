@@ -24,7 +24,16 @@ class MyLoans:
             # Append to list of loan objects
             self.loans.append(Loan(ldf.iloc[n]))
 
+    # The user help handler
+    def uhelp(self):
+        print("You selected help!")
+        return 0
 
+    # The user loan list handler
+    def ulist(self):
+        print("You selected list!")
+        print(str(self.loans))
+        return 0
 
     # The user input handler function
     def uhandler(self):
@@ -42,9 +51,9 @@ class MyLoans:
             uaction = int(input("\tPlease choose your action. "))
 
             if (uaction == 1):
-                uhelp(self.loans)
+                self.uhelp()
             elif (uaction == 2):
-                ulist(self.loans)
+                self.ulist()
             else:
                 raise Exception
         except:
@@ -263,16 +272,7 @@ class Loan:
     def GetEffRate(self):
         return self.i
 
-# The user help handler
-def uhelp(loans: object) -> object:
-    print("You selected help!")
-    return 0
 
-# The user loan list handler
-def ulist(loans: object) -> object:
-    print("You selected list!")
-    print(str(loans))
-    return 0
 
 if (0):
     # Some unit test code to sanitize loan.py
