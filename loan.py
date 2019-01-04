@@ -235,6 +235,34 @@ class Loan:
     def GetEffRate(self):
         return self.i
 
+# The user help handler
+def uhelp():
+    print("You selected help!")
+    return 0
+
+# The user list handler
+def ulist():
+    print("You selected list!")
+    return 0
+
+# The user quit handler
+def uquit():
+    print("Goodbye!")
+    sys.exit()
+
+# The user input handler function
+def uhandler(uaction):
+    switcher = {
+        0: uquit,
+        1: uhelp,
+        2: ulist
+    }
+
+    # Get the handler function based on user input
+    func = switcher.get(uaction, lambda: "Invalid Selection!")
+    # Execute user handler function
+    func()
+
 if (0):
     # Some unit test code to sanitize loan.py
     P0      = 253089     # Loan starting balance
@@ -309,18 +337,29 @@ else:
         print('\nReading input loan file... ', loanfile1)
         l1df = pd.read_csv(loanfile1)
 
-        print(str(l1df.iloc[1]))
-
-        nn = l1df.iloc[1]
-
-        print(str(nn[0]))
-        print(str(nn[1]))
-        print(str(nn['Index']))
-
         # Instantiate MyLoans object
         my_loans = MyLoans(l1df)
+
+        # Handle use input
+        while True:
+            # Provide input options to the user
+            print("\n-----------------------------------------")
+            print("<< 0 >> quit")
+            print("<< 1 >> help")
+            print("<< 2 >> list loans")
+            print("<< 3 >> loan analysis 1")
+            print("<< 4 >> loan analysis 2")
+            print("-----------------------------------------")
+            # Poll the user for input
+            try:
+                uaction = int(input("\tPlease choose your action. "))
+
+                # Run the user input handler
+                uhandler(uaction)
+
+            except ValueError:
+                print("Oops!  That wasn't valid.  Please retry...")
 
 
     if __name__ == '__main__':
         main(sys.argv[1:])
-
