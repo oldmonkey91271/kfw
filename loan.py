@@ -15,14 +15,37 @@ class MyLoans:
     def __init__(self,
                  ldf: object) -> object:
 
-        (NumLoan, NumParm) = ldf.shape
+        (self.NumLoan, self.NumParm) = ldf.shape
 
         self.loans = []
 
         # Iterate on each loan & instantiate loan objects
-        for n in range(NumLoan):
+        for n in range(self.NumLoan):
             # Append to list of loan objects
             self.loans.append(Loan(ldf.iloc[n]))
+
+
+
+    # The user input handler function
+    def uhandler(self,
+                 uaction: object) -> object:
+        switcher = {
+            1: uhelp,
+            2: ulist
+        }
+
+        if (uaction == 0):
+            print("Goodbye!")
+            sys.exit(0)
+        else:
+            # Get the handler function based on user input
+            func = switcher.get(uaction)
+            # Execute user handler function
+            try:
+                func(self.loans)
+            except:
+                print("Error! Exiting | " + str(uaction))
+                sys.exit(1)
 
 # Define generalized Loan class
 class Loan:
@@ -236,36 +259,15 @@ class Loan:
         return self.i
 
 # The user help handler
-def uhelp(my_loans):
+def uhelp(loans: object) -> object:
     print("You selected help!")
     return 0
 
 # The user list handler
-def ulist(my_loans):
+def ulist(loans: object) -> object:
     print("You selected list!")
-
-    print(str(my_loans))
+    print(str(loans))
     return 0
-
-# The user input handler function
-def uhandler(uaction, my_loans):
-    switcher = {
-        1: uhelp,
-        2: ulist
-    }
-
-    if (uaction == 0):
-        print("Goodbye!")
-        sys.exit(0)
-    else:
-        # Get the handler function based on user input
-        func = switcher.get(uaction)
-        # Execute user handler function
-        try:
-            func(my_loans)
-        except:
-            print("Error! Exiting | " + str(uaction))
-            sys.exit(1)
 
 if (0):
     # Some unit test code to sanitize loan.py
@@ -359,7 +361,7 @@ else:
                 uaction = int(input("\tPlease choose your action. "))
 
                 # Run the user input handler
-                uhandler(uaction, my_loans)
+                my_loans.uhandler(uaction)
 
             except ValueError:
                 print("Oops!  That wasn't valid.  Please retry...")
