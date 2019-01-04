@@ -7,8 +7,8 @@ import numpy
 import matplotlib.pyplot as plt
 import pandas as pd
 
-# Define the MyLoans class
-class MyLoans:
+# Define the kloan class
+class kloan:
 
     # The constructor
     # Accepts a dataframe of loan descriptors
@@ -349,7 +349,7 @@ else:
         l1df = pd.read_csv(loanfile1)
 
         # Instantiate MyLoans object
-        my_loans = MyLoans(l1df)
+        my_loans = kloan(l1df)
 
         # Handle use input
         while True:
