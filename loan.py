@@ -236,32 +236,36 @@ class Loan:
         return self.i
 
 # The user help handler
-def uhelp():
+def uhelp(my_loans):
     print("You selected help!")
     return 0
 
 # The user list handler
-def ulist():
+def ulist(my_loans):
     print("You selected list!")
+
+    print(str(my_loans))
     return 0
 
-# The user quit handler
-def uquit():
-    print("Goodbye!")
-    sys.exit()
-
 # The user input handler function
-def uhandler(uaction):
+def uhandler(uaction, my_loans):
     switcher = {
-        0: uquit,
         1: uhelp,
         2: ulist
     }
 
-    # Get the handler function based on user input
-    func = switcher.get(uaction, lambda: "Invalid Selection!")
-    # Execute user handler function
-    func()
+    if (uaction == 0):
+        print("Goodbye!")
+        sys.exit(0)
+    else:
+        # Get the handler function based on user input
+        func = switcher.get(uaction)
+        # Execute user handler function
+        try:
+            func(my_loans)
+        except:
+            print("Error! Exiting | " + str(uaction))
+            sys.exit(1)
 
 if (0):
     # Some unit test code to sanitize loan.py
@@ -355,7 +359,7 @@ else:
                 uaction = int(input("\tPlease choose your action. "))
 
                 # Run the user input handler
-                uhandler(uaction)
+                uhandler(uaction, my_loans)
 
             except ValueError:
                 print("Oops!  That wasn't valid.  Please retry...")
