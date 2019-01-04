@@ -27,25 +27,30 @@ class MyLoans:
 
 
     # The user input handler function
-    def uhandler(self,
-                 uaction: object) -> object:
-        switcher = {
-            1: uhelp,
-            2: ulist
-        }
+    def uhandler(self):
 
-        if (uaction == 0):
-            print("Goodbye!")
-            sys.exit(0)
-        else:
-            # Get the handler function based on user input
-            func = switcher.get(uaction)
-            # Execute user handler function
-            try:
-                func(self.loans)
-            except:
-                print("Error! Exiting | " + str(uaction))
-                sys.exit(1)
+        # Provide input options to the user
+        print("\n-----------------------------------------")
+        print("<< 0 >> quit")
+        print("<< 1 >> help")
+        print("<< 2 >> list loans")
+        print("<< 3 >> loan analysis 1")
+        print("<< 4 >> loan analysis 2")
+        print("-----------------------------------------")
+        # Poll the user for input
+        try:
+            uaction = int(input("\tPlease choose your action. "))
+
+            if (uaction == 1):
+                uhelp(self.loans)
+            elif (uaction == 2):
+                ulist(self.loans)
+            else:
+                raise Exception
+        except:
+            print("Exiting!")
+            sys.exit()
+
 
 # Define generalized Loan class
 class Loan:
@@ -263,7 +268,7 @@ def uhelp(loans: object) -> object:
     print("You selected help!")
     return 0
 
-# The user list handler
+# The user loan list handler
 def ulist(loans: object) -> object:
     print("You selected list!")
     print(str(loans))
@@ -348,23 +353,8 @@ else:
 
         # Handle use input
         while True:
-            # Provide input options to the user
-            print("\n-----------------------------------------")
-            print("<< 0 >> quit")
-            print("<< 1 >> help")
-            print("<< 2 >> list loans")
-            print("<< 3 >> loan analysis 1")
-            print("<< 4 >> loan analysis 2")
-            print("-----------------------------------------")
-            # Poll the user for input
-            try:
-                uaction = int(input("\tPlease choose your action. "))
-
-                # Run the user input handler
-                my_loans.uhandler(uaction)
-
-            except ValueError:
-                print("Oops!  That wasn't valid.  Please retry...")
+            # Run the user input handler
+            my_loans.uhandler()
 
 
     if __name__ == '__main__':
