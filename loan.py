@@ -29,10 +29,33 @@ class kloan:
         print("You selected help!")
         return 0
 
-    # The user loan list handler
-    def ulist(self):
-        print("You selected list!")
-        print(str(self.loans))
+    # The user loan list handler with optional detail (boolean)
+    def ulist(self, isDetail):
+        # Iterate over all loan and display details for user
+        print("Listing " + str(self.NumLoan) + " loans...")
+        for n in range(self.NumLoan):
+            print(str(n+1) + ": " + str(self.loans[n].Name))
+
+        # If the user requested loan details then return the selected loan number
+        if (isDetail):
+            # Poll use for loan selection to detail
+            try:
+                uaction = int(input("\tPlease select loan to detail [1.." + str(self.NumLoan) + "]... "))
+
+                if (uaction in range(1, self.NumLoan+1)):
+                   return(uaction-1)
+                else:
+                    raise Exception
+            except:
+                sys.exit()
+
+        return 0
+
+    # The loan detail handler; distplays a particular loan detail parameter
+    def udetail(self, loan_id):
+
+        # Show the detailed loan information from dataframe
+        print(self.loans[loan_id].ldf)
         return 0
 
     # The user input handler function
@@ -40,20 +63,26 @@ class kloan:
 
         # Provide input options to the user
         print("\n-----------------------------------------")
-        print("<< 0 >> quit")
-        print("<< 1 >> help")
-        print("<< 2 >> list loans")
-        print("<< 3 >> loan analysis 1")
+        print("<< q >> Quit")
+        print("<< h >> Help")
+        print("<< l >> List all loans")
+        print("<< d >> Detail selected loan")
         print("<< 4 >> loan analysis 2")
         print("-----------------------------------------")
         # Poll the user for input
         try:
-            uaction = int(input("\tPlease choose your action. "))
+            uaction = input("\tPlease choose your action. ")
 
-            if (uaction == 1):
+            if (str(uaction).lower() == 'h'):
                 self.uhelp()
-            elif (uaction == 2):
-                self.ulist()
+            elif (str(uaction).lower() == 'l'):
+                # List the loan information
+                self.ulist(False)
+            elif (str(uaction).lower() == 'd'):
+                # Show loan details for selected loan
+                self.udetail(self.ulist(True))
+            elif (int(uaction) == 4):
+                raise Exception
             else:
                 raise Exception
         except:
