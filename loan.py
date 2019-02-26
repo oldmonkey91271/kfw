@@ -67,7 +67,7 @@ class kloan:
         print("<< h >> Help")
         print("<< l >> List all loans")
         print("<< d >> Detail selected loan")
-        print("<< 4 >> loan analysis 2")
+        print("<< bd >> Plot loan burndown chart")
         print("-----------------------------------------")
         # Poll the user for input
         try:
@@ -81,8 +81,11 @@ class kloan:
             elif (str(uaction).lower() == 'd'):
                 # Show loan details for selected loan
                 self.udetail(self.ulist(True))
-            elif (int(uaction) == 4):
-                raise Exception
+            elif (str(uaction).lower() == 'bd'):
+                # Plot loan burndown chart
+                loanx = self.loans[self.ulist(True)]
+                loanx.PlotLoanBurnDown(loanx.P0, loanx.Pn)
+                return 0
             else:
                 raise Exception
         except:
@@ -112,6 +115,12 @@ class Loan:
         self.n_r = n_r
 
         self.i = r                                          # << Effective interest rate
+
+        P0 = ldf['Balance']                                 # << The loan balance
+        self.P0 = P0
+
+        Pn = ldf['Payment']                                 # << The regular loan payment
+        self.Pn = Pn
 
         # If compounding interest
         if (ldf['Type'] == 'Compound'):
